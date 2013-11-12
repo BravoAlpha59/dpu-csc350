@@ -51,10 +51,10 @@ void drawSphere(int numSlices, int numStacks)
   Debug("0" << ": y=" << y[0] << " r=" << r[0] << endl);
 
   int i, j;
-  for (i = 1; i < numStacks; i++)
+  for (i = 0; i <= numStacks; i++)
     {
       // calculate Y position of each stack
-      y[i] = y[i - 1] - deltaY;
+      y[i] = 1 - (i * deltaY);
       // sqrt of ( radius (1) - Y^2 )
       r[i] = sqrt(1.0 - pow(y[i], 2));
       // initialize leftX = r
@@ -84,8 +84,8 @@ void drawSphere(int numSlices, int numStacks)
       glNormal3d(0, 1, 0);
       glVertex3d(0, 1, 0);
       //-BL
-      glNormal3d(r[1] * cos(theta), y[1], leftZ[1]);
-      glVertex3d(r[1] * cos(theta), y[1], leftZ[1]);
+      glNormal3d(leftX[1], y[1], leftZ[1]);
+      glVertex3d(leftX[1], y[1], leftZ[1]);
       //-BR
       glNormal3d(r[1] * cos(theta), y[1], -r[1] * sin(theta));
       glVertex3d(r[1] * cos(theta), y[1], -r[1] * sin(theta));
@@ -134,7 +134,7 @@ void drawSphere(int numSlices, int numStacks)
           Debug("xxxxxxxxxx" << endl);
         }
 
-      // close the bottom
+      // close the bottom of the slice
       //-TL
       glNormal3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);
       glVertex3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);

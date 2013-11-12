@@ -172,15 +172,15 @@ void keyboard(unsigned char key, int x, int y)
 {
   switch(key) {
   case '4': // left
-    theta += 5;
-    glutPostRedisplay();
-    break;
-  case '6': //right
     theta -= 5;
     glutPostRedisplay();
     break;
+  case '6': //right
+    theta += 5;
+    glutPostRedisplay();
+    break;
   case '2': //down
-    phi -= 5;
+    phi += 5;
     // don't let elevation go past 90 or -90
     if (phi>90.0)
       phi = 90.0;
@@ -189,7 +189,7 @@ void keyboard(unsigned char key, int x, int y)
     glutPostRedisplay();
     break;
   case '8': //up
-    phi += 5;
+    phi -= 5;
     // don't let elevation go past 90 or -90
     if (phi>90.0)
       phi = 90.0;
@@ -206,12 +206,63 @@ void keyboard(unsigned char key, int x, int y)
     glutPostRedisplay();
     break;
 
+  // toggle display of lighting spheres
+  case 'L':
+  case 'l':
+    displayLightSpheres = !displayLightSpheres;
+    glutPostRedisplay ();
+    break;
+
   case 27: /* esc */
   case 'Q':
   case 'q':
     exit(0);
     break;
   }
+}
+
+void SpecialKeys(int key, int x, int y)
+{
+    // will be used to speed up/slow down rotation rates
+    if (key == GLUT_KEY_LEFT)
+    {
+        theta -= 5;
+    }
+    if (key == GLUT_KEY_RIGHT)
+    {
+        theta += 5;
+    }
+    if (key == GLUT_KEY_UP)
+    {
+        phi -= 5;
+        // don't let elevation go past 90 or -90
+        if (phi>90.0)
+          phi = 90.0;
+        else if (phi < -90.0)
+          phi = -90.0;
+    }
+    if (key == GLUT_KEY_DOWN)
+    {
+        phi += 5;
+        // don't let elevation go past 90 or -90
+        if (phi>90.0)
+          phi = 90.0;
+        else if (phi < -90.0)
+          phi = -90.0;
+    }
+
+    if (key == GLUT_KEY_PAGE_UP)
+    {
+        dist += 0.5;
+    }
+    if (key == GLUT_KEY_PAGE_DOWN)
+    {
+        dist -= 0.5;
+    }
+    // process other special keys here
+
+
+    glutPostRedisplay();
 }
 
 int main(int argc, char** argv)
@@ -228,6 +279,7 @@ int main(int argc, char** argv)
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
+  glutSpecialFunc(SpecialKeys);
 
   // do everything!
   glutMainLoop();
