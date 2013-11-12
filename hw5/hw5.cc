@@ -40,11 +40,11 @@ void init(void)
 
   // set up ambient, diffuse, and specular components for the lights
   glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+//  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+//  glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
 
   glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-  glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+//  glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
   glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
 
   // We'll use glColor to set the diffuse and ambient material properties
@@ -61,9 +61,8 @@ void init(void)
 
   // enable other things
   glEnable (GL_DEPTH_TEST);
-  glEnable (GL_CULL_FACE);
+//  glEnable (GL_CULL_FACE);
   glShadeModel (GL_SMOOTH);
-  //glShadeModel(GL_FLAT);
 
   // initialize options
   displayLightSpheres = true;
@@ -87,7 +86,8 @@ void display(void)
 {
   // define light source positions
   GLfloat light0Pos[] = {0.0, 2.0, 0.0, 1.0};
-  GLfloat light1Pos[] = {0.0, 0.0, 0.0, 1.0};
+//  GLfloat light1Pos[] = {0.0, 0.0, 0.0, 1.0};
+  GLfloat light1Pos[] = {2.0, 0.75, 1.5, 1.5};
   
   // clear frame buffer and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,7 +103,7 @@ void display(void)
   glLightfv(GL_LIGHT0, GL_POSITION, light0Pos);
   
   // do not light the axes or light source spheres
-  glDisable (GL_LIGHTING);
+  glEnable (GL_LIGHTING);
 
   // draw axes
   glBegin(GL_LINES);
@@ -129,13 +129,17 @@ void display(void)
       glPushMatrix();
       glColor3f (1.0, 1.0, 1.0);
       glTranslatef (light0Pos[0],light0Pos[1],light0Pos[2]);
-      glutSolidSphere (0.05, 10, 10);
+      glScalef (0.1, 0.1, 0.1);
+      drawSphere(50,50);
+//      glutSolidSphere (0.05, 10, 10);
       glPopMatrix();
 
       glPushMatrix();
       glColor3f (1.0, 1.0, 1.0);
       glTranslatef (light1Pos[0],light1Pos[1],light1Pos[2]);
-      glutSolidSphere (0.05, 10, 10);
+      glScalef (0.05, 0.05, 0.05);
+      drawSphere(50,50);
+//      glutSolidSphere (0.05, 10, 10);
       glPopMatrix();
     }
 
