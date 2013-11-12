@@ -26,25 +26,20 @@ bool displayLightSpheres;     // true=>display spheres at light sources
 void init(void)
 {
   // define light property parameters
-  GLfloat lightAmbient[] = {0.0, 0.0, 0.2, 1.0};
+  GLfloat lightAmbient[] = {0.0, 0.0, 0.5, 1.0};
   GLfloat lightDiffuse[] = {1.0, 1.0, 1.0, 1.0};
   GLfloat lightSpecular[]= {1.0, 1.0, 1.0, 1.0};
-
-  // define material property parameters
-  GLfloat matSpecular[]  = {1.0, 1.0, 1.0, 1.0};
-  GLfloat matShininess =   100.0;
-
 
   // define clear color to be black
   glClearColor(0.0, 0.0, 0.0, 0.0);
 
   // set up ambient, diffuse, and specular components for the lights
   glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-//  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-//  glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
 
   glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-//  glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
   glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
 
   // We'll use glColor to set the diffuse and ambient material properties
@@ -55,20 +50,14 @@ void init(void)
   glEnable (GL_LIGHT0);
   glEnable (GL_LIGHT1);
 
-  // define default material properties
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
-  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
-
   // enable other things
   glEnable (GL_DEPTH_TEST);
-//  glEnable (GL_CULL_FACE);
+  glEnable(GL_NORMALIZE);
+
   glShadeModel (GL_SMOOTH);
 
   // initialize options
   displayLightSpheres = true;
-
-  glEnable(GL_NORMALIZE);
-
 }
 
 void setCamera(void)
@@ -84,77 +73,87 @@ void setCamera(void)
 
 void display(void)
 {
+  // define material reflectivity
+  GLfloat matSpecular[]  = {1.0, 1.0, 1.0, 1.0};
+
+  // Shininess coefficient
+  // between 100 and 200 metallic
+  // between 5 and 10 plastic
+  GLfloat matShininess =   80.0;
+
   // define light source positions
   GLfloat light0Pos[] = {0.0, 2.0, 0.0, 1.0};
-//  GLfloat light1Pos[] = {0.0, 0.0, 0.0, 1.0};
-  GLfloat light1Pos[] = {2.0, 0.75, 1.5, 1.5};
+  GLfloat light1Pos[] = {2.0, 1.5, 1.5, 1.5};
   
+  // define default material properties
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
+
   // clear frame buffer and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // position light1 to be on the viewer
+  // position camera
   glLoadIdentity ();
-  glLightfv(GL_LIGHT1, GL_POSITION, light1Pos);
-
-  // position the camera
   setCamera ();
 
-  // place light source 0 in the world
-  glLightfv(GL_LIGHT0, GL_POSITION, light0Pos);
-  
-  // do not light the axes or light source spheres
+  // enable lighting the axes and source spheres
+  // this turns on shading calculations
   glEnable (GL_LIGHTING);
+
+  // place light sources
+  glLightfv(GL_LIGHT0, GL_POSITION, light0Pos);
+  glLightfv(GL_LIGHT1, GL_POSITION, light1Pos);
 
   // draw axes
   glBegin(GL_LINES);
-  // x in red
-  glColor3f(1.0,0.0,0.0);
-  glVertex3i(0,0,0);
-  glVertex3i(2,0,0);
+    // x in red
+    glColor3f(1.0,0.0,0.0);
+    glVertex3i(0,0,0);
+    glVertex3i(2,0,0);
 
-  // y in green
-  glColor3f (0.0, 1.0, 0.0);
-  glVertex3i (0,0,0);
-  glVertex3i (0,2,0);
+    // y in green
+    glColor3f (0.0, 1.0, 0.0);
+    glVertex3i (0,0,0);
+    glVertex3i (0,2,0);
 
-  // z in blue
-  glColor3f (0.0, 0.0, 1.0);
-  glVertex3i (0,0,0);
-  glVertex3i (0,0,2);
+    // z in blue
+    glColor3f (0.0, 0.0, 1.0);
+    glVertex3i (0,0,0);
+    glVertex3i (0,0,2);
   glEnd();
 
   // draw small spheres at the light sources if selected
+  // remember that this is going to behave relative to
+  // attributes of the first object to be drawn (i.e. sphere one)
   if (displayLightSpheres)
     {
       glPushMatrix();
-      glColor3f (1.0, 1.0, 1.0);
-      glTranslatef (light0Pos[0],light0Pos[1],light0Pos[2]);
-      glScalef (0.1, 0.1, 0.1);
-      drawSphere(50,50);
-//      glutSolidSphere (0.05, 10, 10);
+        glColor3f (1.0, 1.0, 1.0);
+        glTranslatef (light0Pos[0],light0Pos[1],light0Pos[2]);
+        glScalef (0.1, 0.1, 0.1);
+        drawSphere(100,100);
       glPopMatrix();
 
       glPushMatrix();
-      glColor3f (1.0, 1.0, 1.0);
-      glTranslatef (light1Pos[0],light1Pos[1],light1Pos[2]);
-      glScalef (0.05, 0.05, 0.05);
-      drawSphere(50,50);
-//      glutSolidSphere (0.05, 10, 10);
+        glColor3f (1.0, 1.0, 1.0);
+        glTranslatef (light1Pos[0],light1Pos[1],light1Pos[2]);
+        glScalef (0.05, 0.05, 0.05);
+        drawSphere(100,100);
       glPopMatrix();
     }
 
-  // enable lighting for the other objects in the world
-  glEnable (GL_LIGHTING);
-
-
-  // draw the two spheres in the world
-  glColor3f (0.0, 0.0, 1.0);
+  // draw sphere one at the origin of the world
+  // size is 1.0
+  glColor3f (0.5, 0.0, 0.5);
   drawSphere (200,200);
   
-  glTranslatef (1.5, 0.0, 0.0);
-  glColor3f (0.0, 1.0, 0.0);
-  glScalef (0.25, 0.25, 0.25);
-  drawSphere (50,50);
+  // draw sphere two relative to one
+  glPushMatrix();
+    glTranslatef (1.5, 0.0, 0.0);
+    glColor3f (0.0, 1.0, 0.0);
+    glScalef (0.25, 0.25, 0.25);
+    drawSphere (50,50);
+  glPopMatrix();
   
   // display things  
   glutSwapBuffers();
@@ -233,4 +232,3 @@ int main(int argc, char** argv)
   // do everything!
   glutMainLoop();
 }
-

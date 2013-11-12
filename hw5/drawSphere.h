@@ -18,8 +18,7 @@ using namespace std;
 #define Debug(x)
 #endif
 
-void
-drawSphere(int numSlices, int numStacks)
+void drawSphere(int numSlices, int numStacks)
 {
   // draws a unit sphere with the origin at the center.  The "top" of the
   // sphere will be on the y-axis.  Normals will be defined appropriately.
@@ -77,10 +76,13 @@ drawSphere(int numSlices, int numStacks)
 
       // remember to compose quads counter-clockwise because of the
       // affect on lighting and shading
-      // leftX+1, rightX+1, rightX, leftX
+      // leftX, leftX+1, rightX+1, rightX
 
       // close the top whose Quad origin of course is 0 stack/slice
       // and Y at the top of sphere is 1
+      //-TL
+      glNormal3d(0, 1, 0);
+      glVertex3d(0, 1, 0);
       //-BL
       glNormal3d(r[1] * cos(theta), y[1], leftZ[1]);
       glVertex3d(r[1] * cos(theta), y[1], leftZ[1]);
@@ -88,9 +90,6 @@ drawSphere(int numSlices, int numStacks)
       glNormal3d(r[1] * cos(theta), y[1], -r[1] * sin(theta));
       glVertex3d(r[1] * cos(theta), y[1], -r[1] * sin(theta));
       //-TR
-      glNormal3d(0, 1, 0);
-      glVertex3d(0, 1, 0);
-      //-TL
       glNormal3d(0, 1, 0);
       glVertex3d(0, 1, 0);
 
@@ -107,6 +106,11 @@ drawSphere(int numSlices, int numStacks)
           rightZ[i] = -r[i] * sin(theta);
           rightZ[i + 1] = -r[i + 1] * sin(theta);
 
+          // top-left
+          Debug("TL->" << "leftX: " << leftX[i] << "  y: " << y[i] << "  leftZ: " << leftZ[i] << endl);
+          glNormal3d(leftX[i], y[i], leftZ[i]);
+          glVertex3d(leftX[i], y[i], leftZ[i]);
+
           // bottom-left
           Debug("BL->" << "  leftX: " << leftX[i+1] << "  y: " << y[i+1] << "  leftZ: " << leftZ[i+1] << endl);
           glNormal3d(leftX[i + 1], y[i + 1], leftZ[i + 1]);
@@ -122,11 +126,6 @@ drawSphere(int numSlices, int numStacks)
           glNormal3d(rightX[i], y[i], rightZ[i]);
           glVertex3d(rightX[i], y[i], rightZ[i]);
 
-          // top-left
-          Debug("TL->" << "leftX: " << leftX[i] << "  y: " << y[i] << "  leftZ: " << leftZ[i] << endl);
-          glNormal3d(leftX[i], y[i], leftZ[i]);
-          glVertex3d(leftX[i], y[i], leftZ[i]);
-
           leftX[i] = rightX[i];
           leftZ[i] = rightZ[i];
 
@@ -136,6 +135,9 @@ drawSphere(int numSlices, int numStacks)
         }
 
       // close the bottom
+      //-TL
+      glNormal3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);
+      glVertex3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);
       //-BL
       glNormal3d(0, -1, 0);
       glVertex3d(0, -1, 0);
@@ -145,9 +147,6 @@ drawSphere(int numSlices, int numStacks)
       //-TR
       glNormal3d(rightX[numStacks], y[numStacks], rightZ[numStacks]);
       glVertex3d(rightX[numStacks], y[numStacks], rightZ[numStacks]);
-      //-TL
-      glNormal3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);
-      glVertex3d(leftX[numStacks], y[numStacks], leftZ[numStacks]);
 
       glEnd();
 
